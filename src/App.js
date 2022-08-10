@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import {useAuth} from "./components/Auth";
+import {useEffect} from "react";
+import {HashRouter, Route, Routes} from 'react-router-dom'
+import Login from "./routes/Login";
+import Signup from "./routes/Signup";
+import NavBar from "./components/NavBar";
+import Main from "./components/Main";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+	const auth = useAuth()
+
+	useEffect(() => {
+		if (!auth?.user) {
+			const data = JSON.parse(localStorage.getItem('user'))
+			if (data) {
+				auth.loginFromLocalStorage(data)
+			}
+		}
+	}, [auth])
+
+	return (
+		<HashRouter>
+			<NavBar/>
+			<Routes>
+				<Route path="/" element={<Main/>}/>
+				<Route path="/login" element={<Login/>}/>
+				<Route path="/signup" element={<Signup/>}/>
+			</Routes>
+		</HashRouter>
+	);
 }
 
 export default App;
