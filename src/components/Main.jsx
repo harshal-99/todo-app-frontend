@@ -3,16 +3,28 @@ import classes from "./Main.module.css";
 import {useEffect, useState} from "react";
 import TodoService from "../service/todo.service";
 import TodoForm from "./TodoForm";
+import {useAuth} from "./Auth";
+import {Box, Typography} from "@mui/material";
 
 const Main = () => {
 	const [todos, setTodos] = useState([])
+	const auth = useAuth()
 
 	useEffect(() => {
+		if (!auth.user) return
 		const controller = new AbortController()
 		TodoService
 			.getAllTodos(controller)
 			.then(data => setTodos(data))
-	}, [])
+	}, [auth.user])
+
+	if (!auth.user) {
+		return <Box>
+			<Typography component="h2">
+				Please login
+			</Typography>
+		</Box>
+	}
 
 	const handleCreateTodo = (todo) => {
 		setTodos([todo, ...todos])
