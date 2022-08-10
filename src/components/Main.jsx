@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import TodoService from "../service/todo.service";
 import TodoForm from "./TodoForm";
 import {useAuth} from "./Auth";
-import {Box, Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 
 const Main = () => {
 	const [todos, setTodos] = useState([])
@@ -37,9 +37,37 @@ const Main = () => {
 	const handleDeleteTodo = (id) => {
 		setTodos(todos.filter(t => t.id !== id))
 	}
+
+	const sortByDate = () => {
+		let todo = [...todos]
+		todo.sort((a, b) => {
+			return new Date(b.date).getTime() - new Date(a.date).getTime()
+		})
+		setTodos(todo)
+	}
+
+	const sortByStatus = () => {
+		let todo = [...todos]
+		todo.sort((a, b) => {
+			return a.completed - b.completed
+		})
+		setTodos(todo)
+	}
+
 	return (
 		<div className={classes.main}>
 			<TodoForm createTodo={handleCreateTodo}/>
+			<Box style={{
+				width: "25rem",
+				display: "flex",
+				flexDirection: "row",
+				justifyContent: "space-around",
+				alignItems: "center"
+			}}>
+				<Typography component="div">Sort By</Typography>
+				<Button onClick={sortByDate}>Date</Button>
+				<Button onClick={sortByStatus}>Completed</Button>
+			</Box>
 			{todos.map(todo =>
 				<Todo key={todo.id} id={todo.id}
 				      title={todo.title}
